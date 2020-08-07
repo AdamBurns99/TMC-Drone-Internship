@@ -85,8 +85,69 @@ class PyParrot(app_gui.MyFrame1):
         self._addCommand(f'{CmdType.Flip.value},{dir}')
 
     def OnAddFlyGrid(self, event):
-        print('Not implemented yet') # TODO implement this method
-        event.Skip()
+        print("Make sure you take off first!")
+        heightGain = int(self.fld_gridHeight.GetValue())
+        lengthForward = int(self.fld_gridLength.GetValue())
+        width = int(self.fld_gridWidth.GetValue())
+        biLines = int(self.fld_gridLines.GetValue())
+        widthSection = width/(biLines+1)
+
+        # Rise
+        self._addCommand(f'{"relative"},0,0,{heightGain},0')
+        # Fly forward and turn right
+        self._addCommand(f'{"relative"},{lengthForward},0,0,90')
+        # Flip
+        self._addCommand(f'{"flip"},{"up"}')
+        # Fly right and turn right
+        self._addCommand(f'{"relative"},{widthSection},0,0,90')
+        # Flip
+        self._addCommand(f'{"flip"},{"up"}')
+        # Fly back and turn left
+        self._addCommand(f'{"relative"},{lengthForward},0,0,-90')
+        # Flip
+        self._addCommand(f'{"flip"},{"up"}')
+        while (biLines >= 2):
+            biLines -= 2
+            # Fly right and turn left
+            self._addCommand(f'{"relative"},{widthSection},0,0,-90')
+            # Flip
+            self._addCommand(f'{"flip"},{"up"}')
+            # Fly forward and turn right
+            self._addCommand(f'{"relative"},{lengthForward},0,0,90')
+            # Flip
+            self._addCommand(f'{"flip"},{"up"}')
+            # Fly right and turn right
+            self._addCommand(f'{"relative"},{widthSection},0,0,90')
+            # Flip
+            self._addCommand(f'{"flip"},{"up"}')
+            # Fly back and turn left
+            self._addCommand(f'{"relative"},{lengthForward},0,0,-90')
+            # Flip
+            self._addCommand(f'{"flip"},{"up"}')
+        if (biLines == 1):
+            biLines -= 1
+            # Fly right and turn left
+            self._addCommand(f'{"relative"},{widthSection},0,0,-90')
+            # Flip
+            self._addCommand(f'{"flip"},{"up"}')
+            # Fly forward
+            self._addCommand(f'{"relative"},{lengthForward},0,0,0')
+            # Flip
+            self._addCommand(f'{"flip"},{"up"}')
+            # Fly back left to home
+            self._addCommand(f'{"relative"},{-lengthForward},{-width},0,0')
+            # Flip
+            self._addCommand(f'{"flip"},{"up"}')
+            # Descend
+            self._addCommand(f'{"relative"},0,0,{-heightGain},0')
+        else:
+            # Fly left and turn left
+            self._addCommand(f'{"relative"},{-width},0,0,-90')
+            # Flip
+            self._addCommand(f'{"flip"},{"up"}')
+            # Descend
+            self._addCommand(f'{"relative"},0,0,{-heightGain},0')
+        print("Make sure you land!")
 
     def OnRemove( self, event ):
         self.lc_commands.DeleteItem(self.lc_commands.GetFocusedItem())
